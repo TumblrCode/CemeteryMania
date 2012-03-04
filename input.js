@@ -1,5 +1,10 @@
 $("#gamecanvas").keydown(onKeyDown);
 $("#gamecanvas").keyup(onKeyUp);
+$("#gamecanvas").mousedown(onMouseDown);
+$("#gamecanvas").mousemove(onMouseMove);
+$("#gamecanvas").mouseup(onMouseUp);
+
+var MouseDown = false;
 
 
 function onKeyDown(event)
@@ -20,11 +25,28 @@ function onKeyDown(event)
 	{
 		panDown();
 	}
-
 }
 
+function onMouseDown(event)
+{
+	MouseDown = true;
+	MouseToWorldOffset(event.clientX, event.clientY);
+}
+
+function onMouseMove(event)
+{
+	if (MouseDown)
+	{
+		mouseMove(event.clientX, event.clientY);
+	}
+}
+
+function onMouseUp(event)
+{
+	MouseDown = false;
+}
 
 function onKeyUp(event)
 {
-
+	
 }

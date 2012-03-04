@@ -23,13 +23,13 @@ function panDown()
 	world_y = world_y+1;
 }
 
-function MouseToWorldOffset(x, y)
+function beginDragMap(x, y)
 {
 	mouse_offset_x = world_x - x;
 	mouse_offset_y = world_y - y;
 }
 
-function mouseMove(x, y)
+function dragMap(x, y)
 {
 	world_x = x + mouse_offset_x;
 	world_y = y + mouse_offset_y;

@@ -30,14 +30,14 @@ function onKeyDown(event)
 function onMouseDown(event)
 {
 	MouseDown = true;
-	MouseToWorldOffset(event.clientX, event.clientY);
+	beginDragMap(event.clientX, event.clientY);
 }
 
 function onMouseMove(event)
 {
 	if (MouseDown)
 	{
-		mouseMove(event.clientX, event.clientY);
+		dragMap(event.clientX, event.clientY);
 	}
 }
 

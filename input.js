@@ -9,19 +9,19 @@ var MouseDown = false;
 
 function onKeyDown(event)
 {
-	if (event.keyCode == 39)
+	if (event.keyCode === 39)
 	{
 		panRight();
 	}
-	else if (event.keyCode == 37)
+	else if (event.keyCode === 37)
 	{
 		panLeft();
 	}
-	else if (event.keyCode == 38)
+	else if (event.keyCode === 38)
 	{
 		panUp();
 	}
-	else if (event.keyCode == 40)
+	else if (event.keyCode === 40)
 	{
 		panDown();
 	}

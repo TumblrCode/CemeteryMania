@@ -3,11 +3,39 @@
  * Module dependencies.
  */
 
-var express = require('express')
+var express = require('express');
 
-var app = module.exports = express.createServer();
+var app = module.exports = express.createServer(), io = require('socket.io').listen(app);
 
-// Configuration
+
+function testData()
+{
+	var x = Math.floor(Math.random()*11);
+	var y = Math.floor(Math.random()*11);
+	
+	return { X: x, Y: y };
+}
+
+// WebSockets
+
+io.sockets.on('connection', function(socket)
+{
+	//TODO: Build opcode/action handler
+	
+	//Validate the client here as well
+	
+	socket.on('test', function()
+	{
+		socket.emit('response', testData());	
+	});
+		
+	socket.on('disconnect', function()
+	{
+		// Client has left the buidling. Let's throw a fucking party.
+	});
+});
+
+// Express Configuration
 
 app.configure(function(){
   app.use(express.bodyParser());

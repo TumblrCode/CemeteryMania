@@ -15,9 +15,16 @@
 			 var socket = io.connect('http://localhost');
 			 socket.on('response', function(data)
 			 {
-			 	alert("X pos:" + data.X + ", Y pos:" + data.Y);
+			 	//alert("X pos:" + data.X + ", Y pos:" + data.Y);
+			 	$("#fly").css("top", data.Y + "em").css("left", data.X + "em");
 			 });
-			 socket.emit("test");
+			 
+			 function doThis()
+			 {
+			 	socket.emit("test");
+			 }
+			 setInterval(doThis, 300);
 		</script>
+		<p id="fly" style="position:absolute; background: red; height:200px; width:200px;">I CAN FLY!!!</p>
 	</body>
 </html>

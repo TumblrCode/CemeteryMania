@@ -1,12 +1,11 @@
 var fs = require('fs');
 var base64 = exports;
 
-//SaveMap(ExampleMap(5, 5, 3, 0), "map.cmm");
-LoadMap("map.cmm");
+SaveMap(ExampleMap(10, 10, 3, 0), "map.cmm");
+//LoadMap("map.cmm");
 
 function ExampleMap(Width, Height, MapLayers, Diversity)
 {
-
 	var MapData = new Array(MapLayers);
 
 	var MapHeader = "W" + Width + "H" + Height + "L" + MapLayers;
@@ -20,7 +19,6 @@ function ExampleMap(Width, Height, MapLayers, Diversity)
 		{
 			tempData += Math.round(Math.random() * Diversity) + ",";
 		}
-		//MapData[i] = BlockDelimiter + encode(tempData);
 		MapData[i] = BlockDelimiter + encode(tempData.substring(0, tempData.length - 1));
 	}
 
@@ -93,9 +91,6 @@ function LoadMap(Filename)
 		if (err) throw err;
 		var DecodedFile = new Buffer(data, 'binary');
 		var DecodedFileString = DecodedFile.toString();
-		//console.log("Reading: (" + DecodedFile.length + ") " + DecodedFileString.substring(0, 50));
-		//console.log("ConvertedBack: " + DecodedFileString.substring(0, 50));
-
 		var Width,Height,Layers;
 		var MapData = "";
 

@@ -4,7 +4,7 @@
 	</head>
 	<body>
 		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
-		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/resource.js"></script>
 		<script type="text/javascript" src="js/world.js"></script>
@@ -12,19 +12,52 @@
 		<script type="text/javascript" src="js/input.js"></script>
 		<script type="text/javascript" src="js/canvas.js"></script>
 		<script type="text/javascript">
-			 var socket = io.connect('http://localhost');
-			 socket.on('response', function(data)
-			 {
-			 	//alert("X pos:" + data.X + ", Y pos:" + data.Y);
-			 	$("#fly").css("top", data.Y + "em").css("left", data.X + "em");
-			 });
-			 
-			 function doThis()
-			 {
-			 	socket.emit("test");
-			 }
-			 setInterval(doThis, 300);
+			var chat = io.connect("http://localhost/chat");	
+			
+			$(document).ready(function()
+			{
+				$("#chat-form").submit(function()
+				{
+					var newFrm = $("#player-name").val();
+					var newMsg = $("#player-message").val();
+					chat.emit('server-send-message', {from: newFrm, message: newMsg});
+					$("#chat-messages").append("<li><span><b>You: </b></span>" + newMsg.replace(/(<([^>]+)>)/ig,"")  + "</li>");
+					$("#player-message").val("");
+					return false;
+				});
+				
+				chat.on('client-send-message', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;
+				});
+				
+				chat.on('chat-player-disconnect', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;					
+				});
+				
+				chat.on('chat-player-connect', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;					
+				});				
+			});
+			
 		</script>
-		<p id="fly" style="position:absolute; background: red; height:200px; width:200px;">I CAN FLY!!!!</p>
+		<div id="chat-container" style="float:right;">
+			<ul id="chat-messages" style="width:400px; height:70%; overflow: scroll;">
+				
+			</ul>
+			<form id="chat-form">
+				<label>Username: </label><input id="player-name" type="text" value="Player"/><br/>
+				<label>Message: </label><input id="player-message" type="text" value=""/><br/>
+				<input type="submit" value="Send Message"/>
+			</form>
+		</div>
 	</body>
 </html>

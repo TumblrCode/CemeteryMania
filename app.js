@@ -18,25 +18,26 @@ function testData()
 }
 
 
-
 // WebSockets
 
-io.sockets.on('connection', function(socket)
+// Chat Server
+var chat = io.of('/chat').on('connection', function(socket)
 {
-	//TODO: Build opcode/action handler
+	socket.broadcast.emit('chat-player-connect', {from: "server", message: "New player connected :)"});
 	
-	//Validate the client here as well
-	
-	socket.on('test', function()
-	{
-		socket.emit('response', testData());	
-	});
-		
 	socket.on('disconnect', function()
 	{
-		// Client has left the buidling. Let's throw a fucking party.
+		socket.broadcast.emit('chat-player-disconnect', {from: "server", message: "Player disconnected :("});
 	});
+	
+	socket.on('server-send-message', function(data)
+	{
+		socket.broadcast.emit('client-send-message', {from: data.from.replace(/(<([^>]+)>)/ig,"") , message: data.message.replace(/(<([^>]+)>)/ig,"") });
+	});	
 });
+
+
+
 
 // Express Configuration
 

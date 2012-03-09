@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+var map = require('map');
 
 var app = module.exports = express.createServer(), io = require('socket.io').listen(app);
 
@@ -15,6 +16,8 @@ function testData()
 	
 	return { X: x, Y: y };
 }
+
+
 
 // WebSockets
 
@@ -54,3 +57,8 @@ app.configure('production', function(){
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+
+map.LoadMap("map/map.cmm", function(MapPacket)
+{
+	console.log("Map loaded; size is (%d, %s).", MapPacket.W, MapPacket.H);
+});

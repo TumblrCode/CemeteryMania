@@ -1,7 +1,7 @@
 var canvas = document.getElementById("gamecanvas");
 var context = canvas.getContext("2d");
 
-var testworld = new world(3, 6);
+var testworld = new world(16, 48);
 
 context.fillStyle="#000000";
 

@@ -1,8 +1,9 @@
 $("#gamecanvas").keydown(onKeyDown);
 $("#gamecanvas").keyup(onKeyUp);
 $("#gamecanvas").mousedown(onMouseDown);
-$("#gamecanvas").mousemove(onMouseMove);
-$("#gamecanvas").mouseup(onMouseUp);
+$("body").mousemove(onMouseMove);
+$("body").mouseup(onMouseUp);
+$("#gamecanvas").mouseout(onMouseOut);
 
 var MouseDown = false;
 
@@ -41,6 +42,11 @@ function onMouseMove(event)
 		dragMap(event.clientX, event.clientY);
 	}
 	HighlightedTile(event.clientX, event.clientY);
+}
+
+function onMouseOut(event)
+{
+
 }
 
 function onMouseUp(event)

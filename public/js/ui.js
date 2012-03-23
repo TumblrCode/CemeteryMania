@@ -1,5 +1,5 @@
-var world_x = 0;
-var world_y = 0;
+var world_x = -1 * tile_width;
+var world_y = -1 * tile_height;
 
 // Used to lock map-to-mouse offset when dragging
 var mouse_offset_x = 0;

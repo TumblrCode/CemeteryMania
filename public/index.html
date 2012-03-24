@@ -3,8 +3,17 @@
 		<title>Cemetery Mania!</title>
 	</head>
 	<body>
+		<style type="text/css">
+			#collisionmask
+			{
+				visibility: hidden;
+			}
+		</style>
 		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
-		<script type="text/javascript" src="http://74.111.11.180:3000/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="http://http://localhost:3000/socket.io/socket.io.js"></script>
+		<!-- Used for calculating the mouse to tile position -->
+		<canvas id="collisionmask" width="128" height="64"></canvas>
+		<script type="text/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/resource.js"></script>
 		<script type="text/javascript" src="js/world.js"></script>

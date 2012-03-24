@@ -1,26 +1,25 @@
 var fs = require('fs');
 var base64 = exports;
 
-//SaveMap(ExampleMap(100, 100, 3, 20), "map.cmm");
-LoadMap("map.cmm");
+SaveMap(ExampleMap(10, 10, 3, 0), "map.cmm");
+//LoadMap("map.cmm");
 
 function ExampleMap(Width, Height, MapLayers, Diversity)
 {
-
 	var MapData = new Array(MapLayers);
 
 	var MapHeader = "W" + Width + "H" + Height + "L" + MapLayers;
 
 	for (var i = 0; i < MapLayers; i++)
 		{
-		var BlockDelimiter = "\nB";
+		var BlockDelimiter = "B";
 		var tempData = "";
 
 		for (var p = 0; p < Width * Height; p++)
 		{
 			tempData += Math.round(Math.random() * Diversity) + ",";
 		}
-		MapData[i] = BlockDelimiter + encode(tempData);
+		MapData[i] = BlockDelimiter + encode(tempData.substring(0, tempData.length - 1));
 	}
 
 	var FileString = MapHeader;
@@ -53,7 +52,7 @@ function decode(encoded) {
     var decodedstring = "";
     for (var i = 0; i < encoded.length; i += 2)
     {
-	decodedstring += "," + repeat(encoded[i + 1], parseInt(encoded[i]));
+	decodedstring += repeat(encoded[i + 1], parseInt(encoded[i]));
     }
     return decodedstring;
 }
@@ -73,7 +72,7 @@ function repeat(s, n)
 
 function SaveMap(FileString, Filename)
 {
-	console.log("Converting: " + FileString.substring(0, 50));
+	console.log("Converting: " + FileString);
 	var FileBuffer = new Buffer(FileString, 'binary');
 	
 	console.log("Writing: " + FileBuffer.toString().substring(0, 50));
@@ -92,29 +91,22 @@ function LoadMap(Filename)
 		if (err) throw err;
 		var DecodedFile = new Buffer(data, 'binary');
 		var DecodedFileString = DecodedFile.toString();
-		//console.log("Reading: (" + DecodedFile.length + ") " + DecodedFileString.substring(0, 50));
-		//console.log("ConvertedBack: " + DecodedFileString.substring(0, 50));
-
 		var Width,Height,Layers;
 		var MapData = "";
 
-		var Header = DecodedFileString.substring(0, DecodedFileString.indexOf("\n") + 2);
-
-		MapData = DecodedFileString.substring(DecodedFileString.indexOf("\n") + 2);
-
-		MapData = decode(MapData).split("\n");
-
-		//console.log("Header: " + Header);
-		
+		// Remove and parse header
+		var Header = DecodedFileString.substring(0, DecodedFileString.indexOf("B"));
 		Width = parseInt(Header.substring(Header.indexOf("W") + 1, Header.indexOf("H")));
 		Height = parseInt(Header.substring(Header.indexOf("H") + 1, Header.indexOf("L")));
 		Layers = parseInt(Header.substring(Header.indexOf("L") + 1, Header.length));
 
+		// Remove and parse map data by block
+		MapData = DecodedFileString.substring(DecodedFileString.indexOf("B") + 1);	
+		MapData = MapData.split("B");	
+
 		console.log("Width: " + Width);
 		console.log("Height: " + Height);
 		console.log("Layers: " + Layers);
-
-		console.log(MapData[0]);
 
 	});
 }

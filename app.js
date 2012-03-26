@@ -6,8 +6,15 @@
  *
  */
 
-var express = require('express'), redis = require('redis'), redis_client = redis.createClient(), map = require('map'), facebookRequest = require('facebook-signed-request'), httprequest = require('request');
-var app = module.exports = express.createServer(), io = require('socket.io').listen(app);
+var express = require('express'), 
+	redis = require('redis'), 
+	io = require('socket.io').listen(app), 
+	map = require('map'), 
+	facebookRequest = require('facebook-signed-request'), 
+	httprequest = require('request');
+	
+var app = module.exports = express.createServer(), 
+	redis_client = redis.createClient();
 
 
 // Redis
@@ -28,6 +35,13 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.dynamicHelpers(
+  	{
+	  session: function(req, res)
+	  {
+	    return req.session;
+	  }
+	});
 });
 
 // Facebook config
@@ -49,11 +63,13 @@ app.post('/', function(req, res)
 				// TODO: rewrite this, but I am lazy right now
 				var user_data;
 				httprequest("https://graph.facebook.com/" + request.data.user_id + "?access_token=" + request.data.oauth_token, function(err, response, body)
-					{ 
-						user_data = JSON.parse(body); 
-						redis_client.set("users." + request.data.user_id + ".name", user_data.first_name + " " + user_data.last_name); 
-					});
+				{ 
+					user_data = JSON.parse(body); 
+					redis_client.set("users." + request.data.user_id + ".name", user_data.first_name + " " + user_data.last_name); 
+					req.session.name = user_data.first_name + " " + user_data.last_name;
+				});
 				res.redirect('/');
+				//res.render('index.jade');
 			}
 			else
 				res.render('auth.jade');
@@ -66,6 +82,7 @@ app.post('/', function(req, res)
 });
 
 // WebSockets
+
 
 // Chat Server
 var chat = io.of('/chat').on('connection', function(socket)

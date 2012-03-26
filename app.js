@@ -8,12 +8,12 @@
 
 var express = require('express'), 
 	redis = require('redis'), 
-	io = require('socket.io').listen(app), 
 	map = require('map'), 
 	facebookRequest = require('facebook-signed-request'), 
 	httprequest = require('request');
 	
-var app = module.exports = express.createServer(), 
+var app = module.exports = express.createServer(), 	
+	io = require('socket.io').listen(app), 
 	redis_client = redis.createClient();
 
 
@@ -46,7 +46,7 @@ app.configure(function(){
 
 // Facebook config
 var fb_appID = "181403871903302";
-var fb_secret = "CENSORED";
+var fb_secret = "C";
 
 facebookRequest.secret = fb_secret;
 

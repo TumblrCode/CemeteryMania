@@ -60,7 +60,7 @@ app.post('/', function(req, res)
 		{
 			if(typeof request.data.oauth_token === 'string')
 			{
-				// TODO: rewrite this, but I am lazy right now
+				// TODO: rewrite this, but I am lazy right now. Also fix session support
 				var user_data;
 				httprequest("https://graph.facebook.com/" + request.data.user_id + "?access_token=" + request.data.oauth_token, function(err, response, body)
 				{ 

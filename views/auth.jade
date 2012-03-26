@@ -1,0 +1,7 @@
+script(type='text/javascript')
+  var oauth_url = 'https://www.facebook.com/dialog/oauth/';
+  oauth_url += '?client_id=181403871903302';
+  oauth_url += '&redirect_uri=' + encodeURIComponent('https://apps.facebook.com/cemeterymania/');
+  oauth_url += '&scope=publish_stream,read_friendlists,publish_checkins'
+
+  window.top.location = oauth_url;

@@ -10,11 +10,9 @@
 			}
 		</style>
 		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
-
 		<!-- Used for calculating the mouse to tile position -->
 		<canvas id="collisionmask" width="128" height="64"></canvas>
-
-		<script type="text/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/resource.js"></script>
 		<script type="text/javascript" src="js/world.js"></script>
@@ -22,7 +20,19 @@
 		<script type="text/javascript" src="js/input.js"></script>
 		<script type="text/javascript" src="js/canvas.js"></script>
 		<script type="text/javascript">
-			var chat = io.connect("http://localhost/chat");	
+			function viewport()
+			{
+			var e = window
+			, a = 'inner';
+			if ( !( 'innerWidth' in window ) )
+			{
+			a = 'client';
+			e = document.documentElement || document.body;
+			}
+			return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
+			}
+
+			var chat = io.connect("http://74.111.11.180/chat");	
 			
 			$(document).ready(function()
 			{
@@ -32,6 +42,7 @@
 					var newMsg = $("#player-message").val();
 					chat.emit('server-send-message', {from: newFrm, message: newMsg});
 					$("#chat-messages").append("<li><span><b>You: </b></span>" + newMsg.replace(/(<([^>]+)>)/ig,"")  + "</li>");
+					//alert(document.cookie.slice(document.cookie.indexOf("c_user") + 7).substr(0, document.cookie.indexOf(";") -3));
 					$("#player-message").val("");
 					return false;
 				});
@@ -60,7 +71,7 @@
 			
 		</script>
 		<div id="chat-container" style="float:right;">
-			<ul id="chat-messages" style="width:400px; height:70%; overflow: scroll;">
+			<ul id="chat-messages" style="width:400px; height:100px; overflow: scroll;">
 				
 			</ul>
 			<form id="chat-form">

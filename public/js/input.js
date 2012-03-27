@@ -57,5 +57,5 @@ function onMouseUp(event)
 
 function onKeyUp(event)
 {
-	
+
 }

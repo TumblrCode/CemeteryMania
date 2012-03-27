@@ -1,66 +1,17 @@
-var canvas = document.getElementById("gamecanvas");
-var context = canvas.getContext("2d");
-var maskcanvas = document.getElementById("collisionmask");
-var maskcontext = maskcanvas.getContext("2d");
 
-var tile_width = 128;
-var tile_height = 64;
-
-var Debug = true;
-
-var blah = "GRASS";
-
-function world(width, height)
+function world(length, width)
 {
+	this.length = length;
+	this.width = width;
+
+	this.zoom_scale = 0.5;
+	
 	this.draw = function(x, y)
 	{
-		var tileLabel = 0;
-		//render tiles
-		for (var m_x = 0; m_x < width; m_x = m_x + 1)
-		{
-			for (var m_y = 0; m_y < height; m_y = m_y + 1)
-			{
-				var render_x = tile_width * m_x + (m_y % 2 != 0 ? (tile_width / 2) : 0);
-				var render_y = (tile_height / 2) * m_y;
-
-				var tile_image = resources[this.map[m_x][m_y]];
-				context.drawImage(tile_image, x+render_x, y+render_y);
-
-				if ( m_x === highlighted_tile_x && m_y === highlighted_tile_y )
-				{
-					context.drawImage(resources["TILEHIGHLIGHT"], x + render_x, y + render_y );
-				}
-
-				if (Debug)
-				{
-					context.fillStyle = "#ffffff";
-					context.fillText(tileLabel++, x + render_x + tile_width / 2, y + render_y + tile_height / 2);
-				}			
-			}
-		}
-
-
-		//render entities
-		for (var m_xw = 0; m_xw < width; m_xw = m_xw + 1)
-		{
-			for (var m_yw = height-1; m_yw >= 0; m_yw = m_yw - 1)
-			{
-				var render_x_t = ((tile_width/2)*m_xw) + ((tile_width/2)*m_yw);
-				var render_y_t = ((tile_height/2)*m_xw) - ((tile_height/2)*m_yw);
-
-				//the entity tiles are 2x the height of the terrain tiles, so we need to act accordingly
-				render_y_t = render_y_t - (tile_height);
-
-				var entity_image = resources[this.entity_map[m_xw][m_yw]];
-				//context.drawImage(entity_image, x+render_x_t, y+render_y_t);
-			}
-		}
-		
+		this.drawTiles(x, y);
+		this.drawEntities(x, y);
 		this.drawHUD(x, y);
-		this.drawCollisionMask(x, y);
 	}
-	this.width = width;
-	this.height = height;
 	
 	this.drawHUD = function(x, y)
 	{
@@ -72,28 +23,48 @@ function world(width, height)
 		}
 	}
 
-	this.drawCollisionMask = function(x, y)
-	{	
-		// Draws the tile collision mask on the secondary canvas
-		maskcontext.fillStyle = "#000000";
-		maskcontext.fillRect(0, 0, canvas.width, canvas.height);
-		maskcontext.drawImage(resources["TILEMASK"], 0, 0);
+	this.drawTiles = function(x, y)
+	{
+		for (var m_x = 0; m_x < length; m_x = m_x + 1)
+		{
+			for (var m_y = 0; m_y < width; m_y = m_y + 1)
+			{
+				var render_x = ((tile_width/2)*m_x) + ((tile_width/2)*m_y);
+				var render_y = ((tile_height/2)*m_x) - ((tile_height/2)*m_y);
+
+				var tile_image = resources[this.map[m_x][m_y]];
+
+				context.drawImage(tile_image, (x+render_x)*this.zoom_scale, (y+render_y)*this.zoom_scale, (tile_width*this.zoom_scale), (tile_height*this.zoom_scale));
+
+				//if ( m_x === highlighted_tile_x && m_y === highlighted_tile_y )
+				//{
+				//	context.drawImage(resources["TILEHIGHLIGHT"], x + render_x, y + render_y, 20, 20);
+				//}
+
+				//Print debug coordinate label over tiles
+				if (Debug)
+				{
+					context.fillStyle = "#ffffff";
+					context.fillText("("+m_x+","+m_y+")", ((x + render_x + tile_width/2) - 10)*this.zoom_scale, (y + render_y + tile_height/2)*this.zoom_scale);
+				}
+			}
+		}	
+	}
+
+	this.drawEntities = function(x, y)
+	{
 	}
 
 	// Populate map
-	this.map = new Array(width);
-	this.entity_map = new Array(width);
-
-	for (var index = 0; index < width; index++)
+	this.map = new Array(length);
+	for (var index = 0; index < length; index++)
 	{
-		this.map[index] = new Array(height);
-		this.entity_map[index] = new Array(height);
+		this.map[index] = new Array(width);
 
 		// set to grass
-		for(var subindex = 0; subindex < height; subindex++)
+		for(var subindex = 0; subindex < width; subindex++)
 		{
 			this.map[index][subindex] = "GRASS";
-			this.entity_map[index][subindex] = "TOMBSTONE";
 		}
 	}
 }

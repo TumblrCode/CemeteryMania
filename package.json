@@ -4,7 +4,7 @@
   , "version": "0.0.0"
   , "repository": {
       "type": "git"
-    , "url": "http://github.com/leonsbuddydave/CemeteryMania.git"
+    , "url": "http://github.com/TumblrCode/CemeteryMania.git"
   }
   , "private": true
   , "scripts": {"start": "node app.js"}

@@ -11,6 +11,7 @@ var express = require('express'),
 	map = require('map'), 
 	facebookRequest = require('facebook-signed-request'), 
 	httprequest = require('request');
+	cm = require('cm-gamecore');
 	
 var app = module.exports = express.createServer(), 	
 	io = require('socket.io').listen(app), 
@@ -140,3 +141,5 @@ map.LoadMap("map/map.cmm", function(MapPacket)
 {
 	console.log("Map loaded; size is (%d, %s).", MapPacket.W, MapPacket.H);
 });
+
+cm.hello();

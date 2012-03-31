@@ -1,8 +1,9 @@
 
-function world(length, width)
+function world(length, width, hud)
 {
 	this.length = length;
 	this.width = width;
+	this.hud = hud;
 
 	this.zoom_scale = 0.5;
 	
@@ -10,17 +11,7 @@ function world(length, width)
 	{
 		this.drawTiles(x, y);
 		this.drawEntities(x, y);
-		this.drawHUD(x, y);
-	}
-	
-	this.drawHUD = function(x, y)
-	{
-		if (Debug)
-		{
-			context.fillStyle = "#ffffff";
-			context.fillText("World: (" + mouse_world_x + ", " + mouse_world_y + ")", 2, 10);
-			context.fillText("Canvas: (" + mouse_canvas_x + ", " + mouse_canvas_y + ")", 2, 20);
-		}
+		hud.draw();
 	}
 
 	this.drawTiles = function(x, y)

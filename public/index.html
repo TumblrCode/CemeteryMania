@@ -10,8 +10,12 @@
 			}
 		</style>
 		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
-		<!-- Used for calculating the mouse to tile position -->
-		<canvas id="collisionmask" width="128" height="64"></canvas>
+
+		<!-- Buttons for testing UI dialogs -->
+		<br />
+		<input type="button" value="Popup" onClick="testhud.newDialog('Test Title', 'Text')">
+		<input type="button" value="Kill Popup" onClick="testhud.clearDialog()">
+
 		<script type="text/javascript" src="socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/config.js"></script>
@@ -20,6 +24,7 @@
 		<script type="text/javascript" src="js/world.js"></script>
 		<script type="text/javascript" src="js/ui.js"></script>
 		<script type="text/javascript" src="js/input.js"></script>
+		<script type="text/javascript" src="js/hud.js"></script>
 		<script type="text/javascript" src="js/canvas.js"></script>
 		<script type="text/javascript">
 			function viewport()

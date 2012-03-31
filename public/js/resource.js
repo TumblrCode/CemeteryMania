@@ -13,7 +13,7 @@ for (name in resources) {
 	if (resources[name] == null) {
 		img.src = null;
 	} else {
-		img.src = "assets/" + resources[name];
+		img.src = "../assets/" + resources[name];
 	}
 	resources[name] = img;
 }

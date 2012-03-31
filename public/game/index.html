@@ -1,0 +1,83 @@
+<html>
+	<head>
+		<title>Cemetery Mania!</title>
+	</head>
+	<body>
+		<style type="text/css">
+			#collisionmask
+			{
+				visibility: hidden;
+			}
+		</style>
+		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
+		<!-- Used for calculating the mouse to tile position -->
+		<canvas id="collisionmask" width="128" height="64"></canvas>
+		<script type="text/javascript" src="../socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/config.js"></script>
+		<script type="text/javascript" src="../js/resource.js"></script>
+		<script type="text/javascript" src="../js/world.js"></script>
+		<script type="text/javascript" src="../js/ui.js"></script>
+		<script type="text/javascript" src="../js/input.js"></script>
+		<script type="text/javascript" src="../js/canvas.js"></script>
+		<script type="text/javascript">
+			function viewport()
+			{
+			var e = window
+			, a = 'inner';
+			if ( !( 'innerWidth' in window ) )
+			{
+			a = 'client';
+			e = document.documentElement || document.body;
+			}
+			return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
+			}
+
+			var chat = io.connect("http://mgoeppner.com/chat");	
+			
+			$(document).ready(function()
+			{
+				$("#chat-form").submit(function()
+				{
+					var newMsg = $("#player-message").val();
+					chat.emit('server-send-message', {from: "", message: newMsg});
+					$("#chat-messages").append("<li><span><b>You: </b></span>" + newMsg.replace(/(<([^>]+)>)/ig,"")  + "</li>");
+					//alert(document.cookie.slice(document.cookie.indexOf("c_user") + 7).substr(0, document.cookie.indexOf(";") -3));
+					$("#player-message").val("");
+					return false;
+				});
+				
+				chat.on('client-send-message', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;
+				});
+				
+				chat.on('chat-player-disconnect', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;					
+				});
+				
+				chat.on('chat-player-connect', function(data)
+				{
+					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
+					var objDiv = document.getElementById("chat-messages");
+					objDiv.scrollTop = objDiv.scrollHeight;					
+				});				
+			});
+			
+		</script>
+		<div id="chat-container" style="float:right;">
+			<ul id="chat-messages" style="width:400px; height:100px; overflow: scroll;">
+				
+			</ul>
+			<form id="chat-form">
+				<label>Message: </label><input id="player-message" type="text" value=""/><br/>
+				<input type="submit" value="Send Message"/>
+			</form>
+		</div>
+	</body>
+</html>

@@ -1,4 +1,5 @@
-var testworld = new world(16, 48);
+var testhud = new hud();
+var testworld = new world(16, 48, testhud);
 
 $(document).ready(function(){
 

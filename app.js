@@ -36,7 +36,7 @@ app.configure(function()
   app.use(express.bodyParser());
   app.use(express.cookieParser());
   app.use(express.session({ secret: "CM Secret!", key: "cm.sid", store: sessionStore }));
-  app.use(express.static(__dirname + '/public'));
+  app.use(express['static'](__dirname + '/public'));
   app.dynamicHelpers(
   	{
 	  session: function(req, res)
@@ -70,7 +70,14 @@ app.post('/', function(req, res)
 				httprequest("https://graph.facebook.com/" + request.data.user_id + "?access_token=" + request.data.oauth_token, function(err, response, body)
 				{ 
 					user_data = JSON.parse(body); 
-					redis_client.set("users." + req.session.userid + ".name", user_data.first_name + " " + user_data.last_name); 
+					console.log(user_data)
+					
+					var userData =
+					{
+						
+					};
+					
+					redis_client.set("users:" + req.session.userid + ":name", user_data.first_name + " " + user_data.last_name); 
 					req.session.name = user_data.first_name + " " + user_data.last_name;
 					req.session.save();
 					// Redirect to the actual game
@@ -90,11 +97,11 @@ app.get('/', function(req, res)
 {
 	req.session.userid = "dev_00";
 	req.session.name = "Dev Player";
+	req.session.auth = "DEV";
 	req.session.save();
 	// Redirect to the actual game
 	res.redirect('/game');	
 });
-<<<<<<< HEAD
 
 app.get('/game', function(req,res)
 {
@@ -103,16 +110,6 @@ app.get('/game', function(req,res)
 
 // Websockets
 
-=======
-
-app.get('/game', function(req,res)
-{
-	// Stub for now. Important things could go here.
-});
-
-// Websockets
-
->>>>>>> cfcac221f2f572f15ec3d4642a638452e47129f0
 io.set('authorization', function(data, accept)
 {
 	if(data.headers.cookie)

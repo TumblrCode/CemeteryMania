@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  * 
@@ -51,6 +50,7 @@ app.configure(function()
 var fb_appID = "181403871903302";
 var fb_secret = "adca435e190332aa685d52e07b280a7e";
 
+
 facebookRequest.secret = fb_secret;
 
 // Login via facebook
@@ -94,6 +94,7 @@ app.get('/', function(req, res)
 	// Redirect to the actual game
 	res.redirect('/game');	
 });
+<<<<<<< HEAD
 
 app.get('/game', function(req,res)
 {
@@ -102,6 +103,16 @@ app.get('/game', function(req,res)
 
 // Websockets
 
+=======
+
+app.get('/game', function(req,res)
+{
+	// Stub for now. Important things could go here.
+});
+
+// Websockets
+
+>>>>>>> cfcac221f2f572f15ec3d4642a638452e47129f0
 io.set('authorization', function(data, accept)
 {
 	if(data.headers.cookie)

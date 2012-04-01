@@ -10,6 +10,14 @@
 			}
 		</style>
 		<canvas id="gamecanvas" width="760" height="570" tabindex="1"></canvas>
+<<<<<<< HEAD
+=======
+		<!-- Buttons for testing UI dialogs -->
+		<br />
+		<input type="button" value="Popup" onClick="testhud.newDialog('Test Title', 'Text')">
+		<input type="button" value="Kill Popup" onClick="testhud.clearDialog()">
+				
+>>>>>>> cfcac221f2f572f15ec3d4642a638452e47129f0
 		<!-- Used for calculating the mouse to tile position -->
 		<canvas id="collisionmask" width="128" height="64"></canvas>
 		<script type="text/javascript" src="../socket.io/socket.io.js"></script>
@@ -19,20 +27,9 @@
 		<script type="text/javascript" src="../js/world.js"></script>
 		<script type="text/javascript" src="../js/ui.js"></script>
 		<script type="text/javascript" src="../js/input.js"></script>
+		<script type="text/javascript" src="../js/hud.js"></script>		
 		<script type="text/javascript" src="../js/canvas.js"></script>
 		<script type="text/javascript">
-			function viewport()
-			{
-			var e = window
-			, a = 'inner';
-			if ( !( 'innerWidth' in window ) )
-			{
-			a = 'client';
-			e = document.documentElement || document.body;
-			}
-			return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
-			}
-
 			var chat = io.connect("http://mgoeppner.com/chat");	
 			
 			$(document).ready(function()

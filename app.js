@@ -10,13 +10,17 @@ var express = require('express'),
 	redis = require('redis'), 
 	map = require('map'), 
 	facebookRequest = require('facebook-signed-request'), 
-	httprequest = require('request');
-	cm = require('cm-gamecore');
+	httprequest = require('request'),
+	cm = require('cm-gamecore'),
+	redisStore = require('connect-redis')(express);
 	
 var app = module.exports = express.createServer(), 	
 	io = require('socket.io').listen(app), 
-	redis_client = redis.createClient();
+	redis_client = redis.createClient(),
+	sessionStore = new redisStore({ client: redis_client });
 
+var parseCookie = require('connect').utils.parseCookie
+var Session = require('connect').middleware.session.Session;
 
 // Redis
 //redis_client.auth("PASSWORD");
@@ -26,15 +30,13 @@ redis_client.on("error", function(err)
 	console.log("RedisError: " + err);
 });
 
-
 // Express Configuration
 
-app.configure(function(){
+app.configure(function()
+{
   app.use(express.bodyParser());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: "CM Secret!" }));
-  app.use(express.methodOverride());
-  app.use(app.router);
+  app.use(express.session({ secret: "CM Secret!", key: "cm.sid", store: sessionStore }));
   app.use(express.static(__dirname + '/public'));
   app.dynamicHelpers(
   	{
@@ -47,10 +49,11 @@ app.configure(function(){
 
 // Facebook config
 var fb_appID = "181403871903302";
-var fb_secret = "C";
+var fb_secret = "adca435e190332aa685d52e07b280a7e";
 
 facebookRequest.secret = fb_secret;
 
+// Login via facebook
 app.post('/', function(req, res)
 {
 	// Handle inital FB post request
@@ -61,74 +64,112 @@ app.post('/', function(req, res)
 		{
 			if(typeof request.data.oauth_token === 'string')
 			{
-				// TODO: rewrite this, but I am lazy right now. Also fix session support
-				var user_data;
+				req.session.userid = request.data.user_id;
+				
+				// Do some fancy authentication here, but for now just get the user's name from facebook
 				httprequest("https://graph.facebook.com/" + request.data.user_id + "?access_token=" + request.data.oauth_token, function(err, response, body)
 				{ 
 					user_data = JSON.parse(body); 
-					redis_client.set("users." + request.data.user_id + ".name", user_data.first_name + " " + user_data.last_name); 
+					redis_client.set("users." + req.session.userid + ".name", user_data.first_name + " " + user_data.last_name); 
 					req.session.name = user_data.first_name + " " + user_data.last_name;
+					req.session.save();
+					// Redirect to the actual game
+					res.redirect('/game');
 				});
-				res.redirect('/');
-				//res.render('index.jade');
 			}
 			else
 				res.render('auth.jade');
 		}
 		else
-			console.log(error);
+			console.log(error);	
 	});
-	
-		
 });
 
-// WebSockets
+// Direct connection
+app.get('/', function(req, res)
+{
+	req.session.userid = "dev_00";
+	req.session.name = "Dev Player";
+	req.session.save();
+	// Redirect to the actual game
+	res.redirect('/game');	
+});
 
+app.get('/game', function(req,res)
+{
+	// Stub for now. Important things could go here.
+});
 
-// Chat Server
+// Websockets
+
+io.set('authorization', function(data, accept)
+{
+	if(data.headers.cookie)
+	{
+		data.cookie = parseCookie(data.headers.cookie);
+        data.sessionID = data.cookie['cm.sid'];
+        data.sessionStore = sessionStore;
+        sessionStore.get(data.sessionID, function(err, session)
+        {
+        	if(session && !err)
+        	{
+        		data.session = new Session(data, session);
+        		return accept(null , true);
+        	}
+        	else
+        		return accept("No session exists for this cookie", false);
+        });	
+	}
+	else
+	{
+		// No Cookies
+		accept("No cookies sent", false);
+	}
+});
+
 var chat = io.of('/chat').on('connection', function(socket)
 {
-	socket.broadcast.emit('chat-player-connect', {from: "server", message: "New player connected :)"});
-	
+	// Update the session on connect/refresh
+	socket.handshake.session.reload(function()
+	{
+		socket.handshake.session.touch().save();
+	});
+    
+    // Socket events		
 	socket.on('disconnect', function()
 	{
-		socket.broadcast.emit('chat-player-disconnect', {from: "server", message: "Player disconnected :("});
+		socket.broadcast.emit('chat-player-disconnect', { from: "server", message: socket.handshake.session.name + " disconnected :(" });
 	});
 	
 	socket.on('server-send-message', function(data)
 	{
-		socket.broadcast.emit('client-send-message', {from: data.from.replace(/(<([^>]+)>)/ig,"") , message: data.message.replace(/(<([^>]+)>)/ig,"") });
+		socket.broadcast.emit('client-send-message', {from: socket.handshake.session.name , message: data.message.replace(/(<([^>]+)>)/ig,"") });
 	});	
 });
 
-// Game Server
 var game = io.of('/game').on('connection', function(socket)
 {
-	
-	socket.on('client-request-player-data', function(data)
+	// Handle any incoming game packets here
+	// STUB
+	socket.on('client-packet', function(data)
 	{
-		var authenticated = false;
-		// Authenticate player
-					
-		var playerData = {};	
 		
-		if(authenticated)
-			socket.emit('game-player-data', playerData);			
+		if(socket.handshake.session.userid !== 'dev_00')
+			socket.emit('server-packet', {} );
 		else
-			socket.emit('game-player-data', { exception : "AuthError"});		
+			socket.emit('server-dev-packet', {} );	
 	});
 	
-	// Handle game events here
 });
 
-// End WebSockets
 
-
-app.configure('development', function(){
+app.configure('development', function()
+{
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.configure('production', function(){
+app.configure('production', function()
+{
   app.use(express.errorHandler());
 });
 

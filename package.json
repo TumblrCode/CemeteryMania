@@ -1,16 +1,39 @@
 {
     "name": "CemeteryMania"
   , "description": "profiteering the dead"
-  , "version": "0.0.0"
+  , "version": "0.0.1"
   , "repository": {
       "type": "git"
     , "url": "http://github.com/TumblrCode/CemeteryMania.git"
   }
+  , "author" : 
+  	{
+  		"name" : "TumblrCode"
+  	}
+  , "contributors": 
+  	[
+	  	{
+	  		"name" : "leonsbuddydave"
+	  	},
+	  	{
+	  		"name" : "loganwm"
+	  	},
+	  	{
+	  		"name" : "mgoeppner"
+	  	}	  		  	
+  	]
   , "private": true
   , "scripts": {"start": "node app.js"}
-  , "dependencies": {
-      "express": "2.5.8"
-    , "jade": ">= 0.0.1"
-    , "socket.io" : ">= 0.9.0"
-  }
+  , "dependencies": 
+  	{
+	      "express": "2.5.8"
+	    , "jade": ">= 0.0.1"
+	    , "socket.io" : ">= 0.9.0"
+	    , "redis" : ">= 0.7.1"
+	    , "connect" : ">= 1.8.6"
+	    , "connect-redis" : ">= 1.3.0"
+	    , "b64url" : ">= 1.0.3"
+	    , "facebook-signed-request" : ">= 0.0.2"
+	    , "request" : ">= 2.9.153"
+  	}
 }

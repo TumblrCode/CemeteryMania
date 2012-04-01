@@ -1,9 +1,4 @@
 Cemetery Mania
 ==============
 
-Dependencies (npm install)
-==============
-express  
-socket.io  
-
-You can start the game by running `npm start` or `node app.js`.
+You can start the game server by running `npm start` or `node app.js`. By default it wil start on `localhost:3000`

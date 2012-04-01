@@ -27,7 +27,11 @@
 		<script type="text/javascript" src="../js/hud.js"></script>		
 		<script type="text/javascript" src="../js/canvas.js"></script>
 		<script type="text/javascript">
-			var chat = io.connect("http://mgoeppner.com/chat");	
+			// Connect to the chat server
+			var chat = io.connect("http://mgoeppner.com/chat");
+			
+			// Connect to the game server
+			var game = io.connect("http://mgoeppner.com/game");		
 			
 			$(document).ready(function()
 			{
@@ -60,7 +64,42 @@
 					$("#chat-messages").append("<li><span><b>" + data.from + ": </b></span>" + data.message + "</li>");
 					var objDiv = document.getElementById("chat-messages");
 					objDiv.scrollTop = objDiv.scrollHeight;					
-				});				
+				});
+				
+				game.on('server-packet', function(data)
+				{
+					// Handle playerConnect/playerDisconnect
+					if(data.action === "playerConnect")
+					{
+						$("#chat-messages").append("<li><span><b>Connected to game server...</b></li>");
+					}
+					else if(data.action === "playerDisconnect")
+					{
+						$("#chat-messages").append("<li><span><b>Disconnected from game server...</b></li>");
+					}
+					else
+					{
+						// Normal packet
+						
+						// DEV Packet Dump
+						$("#chat-messages").append("<li><span><b>START PACKET DATA</b></li>");
+						for(key in data)
+						{
+							$("#chat-messages").append("<li><span><b>" + key + ": </b></span>" + data[key] + "</li>");
+						}
+						$("#chat-messages").append("<li><span><b>END PACKET DATA</b></li>")						
+						// END DEV
+					}
+				});
+				
+				game.on('server-dev-packet', function(data)
+				{
+					alert(data.data);
+				});
+				
+				// Test packet
+				game.emit('client-packet', { action : 'demoAction', data : 'foo' })
+								
 			});
 			
 		</script>

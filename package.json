@@ -6,10 +6,7 @@
       "type": "git"
     , "url": "http://github.com/TumblrCode/CemeteryMania.git"
   }
-  , "author" : 
-  	{
-  		"name" : "TumblrCode"
-  	}
+  , "author" : "TumblrCode"
   , "contributors": 
   	[
 	  	{

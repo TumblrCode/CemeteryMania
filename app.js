@@ -204,7 +204,7 @@ var game = io.of('/game').on('connection', function(socket)
 			try
 			{
 				// Setup a callback to return the result to the client
-				function callback(result)
+				var callback = function(result)
 				{
 					if(typeof result === 'object' && result.action === undefined)
 					{
@@ -215,7 +215,10 @@ var game = io.of('/game').on('connection', function(socket)
 				}
 				
 				// Fire the needed event
-				cm[data.action](data.data, callback);			
+				if(typeof cm[data.action] === 'function')
+					cm[data.action](data.data, callback);
+				else
+					socket.emit('server-packet', { exception : "Bad Action" } );			
 			}
 			catch(err)
 			{

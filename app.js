@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  * 
@@ -49,7 +48,7 @@ app.configure(function()
 
 // Facebook config
 var fb_appID = "181403871903302";
-var fb_secret = "adca435e190332aa685d52e07b280a7e";
+var fb_secret = "CENSORED";
 
 facebookRequest.secret = fb_secret;
 

@@ -48,7 +48,7 @@ app.configure(function()
 
 // Facebook config
 var fb_appID = "181403871903302";
-var fb_secret = "CENSORED";
+var fb_secret = "";
 
 
 facebookRequest.secret = fb_secret;
@@ -122,11 +122,6 @@ app.get('/', function(req, res)
 	res.redirect('/game');	
 });
 
-app.get('/game', function(req,res)
-{
-	// Stub for now. Important things could go here.
-});
-
 // Websockets
 
 
@@ -157,11 +152,12 @@ io.set('authorization', function(data, accept)
 
 var chat = io.of('/chat').on('connection', function(socket)
 {
-	// Update the session on connect/refresh
+	// Update the session on connect/refresh/heartbeat
 	socket.handshake.session.reload(function()
 	{
 		socket.handshake.session.touch().save();
 	});
+	socket.broadcast.emit('chat-player-connect', { from: "server", message: socket.handshake.session.username + " connected :)" });
     
     // Socket events		
 	socket.on('disconnect', function()
@@ -180,15 +176,22 @@ var game = io.of('/game').on('connection', function(socket)
 	// Connection
 	cm.playerConnect( { userID : socket.handshake.session.userid }, function(result)
 	{
+		if(typeof result === 'object' && result.action === undefined)
+		{
+			result.action = "playerConnect";
+		}
 		socket.emit('server-packet', result);
 	});
 	
 	// Disconnection
 	socket.on('disconnect', function(data)
 	{	
-		cm.playerDisconnect({ userID : socket.handshake.session.userid }, function(result)
+		cm.playerDisconnect( { userID : socket.handshake.session.userid }, function(result)
 		{
-			return;
+			if(typeof result === 'object' && result.action === undefined)
+				result.action = "playerDisconnect";
+			
+			socket.emit('server-packet', result);
 		});
 	})	
 	
@@ -200,13 +203,19 @@ var game = io.of('/game').on('connection', function(socket)
 			try
 			{
 				// Setup a callback to return the result to the client
-				function callback(result)
+				var callback = function(result)
 				{
+					if(typeof result === 'object' && result.action === undefined)
+						result.action = data.action;
+					
 					socket.emit('server-packet', result);
 				}
 				
 				// Fire the needed event
-				cm[data.action](data.data, callback);			
+				if(typeof cm[data.action] === 'function')
+					cm[data.action](data.data, callback);
+				else
+					socket.emit('server-packet', { exception : "Bad Action" } );			
 			}
 			catch(err)
 			{

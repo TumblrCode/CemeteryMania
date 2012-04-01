@@ -189,9 +189,8 @@ var game = io.of('/game').on('connection', function(socket)
 		cm.playerDisconnect( { userID : socket.handshake.session.userid }, function(result)
 		{
 			if(typeof result === 'object' && result.action === undefined)
-			{
 				result.action = "playerDisconnect";
-			}
+			
 			socket.emit('server-packet', result);
 		});
 	})	
@@ -207,10 +206,8 @@ var game = io.of('/game').on('connection', function(socket)
 				var callback = function(result)
 				{
 					if(typeof result === 'object' && result.action === undefined)
-					{
-						// Set an action if one wasn't specified
 						result.action = data.action;
-					}
+					
 					socket.emit('server-packet', result);
 				}
 				

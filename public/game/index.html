@@ -19,28 +19,40 @@
 		<canvas id="collisionmask" width="128" height="64"></canvas>
 		<script type="text/javascript" src="../socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="../js/jquery.js"></script>
+
 		<script type="text/javascript" src="../js/config.js"></script>
 		<script type="text/javascript" src="../js/resource.js"></script>
+
 		<script type="text/javascript" src="../js/world.js"></script>
+		<script type="text/javascript" src="../js/hud.js"></script>
+		<script type="text/javascript" src="../js/gameinstance.js"></script>
+		<script type="text/javascript" src="../js/game.js"></script>
+
 		<script type="text/javascript" src="../js/ui.js"></script>
 		<script type="text/javascript" src="../js/input.js"></script>
-		<script type="text/javascript" src="../js/hud.js"></script>		
-		<script type="text/javascript" src="../js/canvas.js"></script>
+		
 		<script type="text/javascript">
 			// Connect to the chat server
-			var chat = io.connect("http://mgoeppner.com/chat");
+			//var chat = io.connect("http://mgoeppner.com/chat");
+			var chat = io.connect("locahost:3000/chat");
 			
 			// Connect to the game server
-			var game = io.connect("http://mgoeppner.com/game");		
+			//var game = io.connect("http://mgoeppner.com/game");		
+			var game = io.connect("locahost:3000/game");
 			
 			$(document).ready(function()
 			{
+				start();
+			
 				$("#chat-form").submit(function()
 				{
 					var newMsg = $("#player-message").val();
 					chat.emit('server-send-message', {from: "", message: newMsg});
 					$("#chat-messages").append("<li><span><b>You: </b></span>" + newMsg.replace(/(<([^>]+)>)/ig,"")  + "</li>");
 					$("#player-message").val("");
+					
+					testworld.map[1][1] = "WATER";
+					
 					return false;
 				});
 				

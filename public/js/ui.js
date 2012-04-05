@@ -24,30 +24,10 @@ var mouse_x_in_tile = 0;
 var highlighted_tile_x = 0;
 var highlighted_tile_y = 0;
 
-function panLeft()
-{
-	world_x = world_x-1;
-}
-
-function panRight()
-{
-	world_x = world_x+1;
-}
-
-function panUp()
-{
-	world_y = world_y-1;
-}
-
-function panDown()
-{
-	world_y = world_y+1;
-}
-
 function beginDragMap(x, y)
 {
-	mouse_offset_x = world_x - x;
-	mouse_offset_y = world_y - y;
+	mouse_offset_x = instance.world.camera_x - x;
+	mouse_offset_y = instance.world.camera_y - y;
 }
 
 function setMouseWorldPosition(x, y)
@@ -60,8 +40,8 @@ function setMouseWorldPosition(x, y)
 
 function dragMap(x, y)
 {
-	world_x = x + mouse_offset_x;
-	world_y = y + mouse_offset_y;
+	instance.world.camera_x = x + mouse_offset_x;
+	instance.world.camera_y = y + mouse_offset_y;
 }
 
 function endDragMap(x, y)
